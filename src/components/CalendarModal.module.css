@@ -1,0 +1,169 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 0.2s forwards;
+}
+
+.modal {
+    background-color: #fdfbf7;
+    /* Off-white paper */
+    width: 90%;
+    max-width: 500px;
+    padding: 1.5rem;
+    border-radius: 4px;
+    /* Slight roundness */
+    box-shadow:
+        5px 5px 15px rgba(0, 0, 0, 0.15),
+        1px 1px 3px rgba(0, 0, 0, 0.1);
+
+    transform: scale(0.95);
+    animation: popIn 0.2s forwards;
+    position: relative;
+    border: 1px solid #e1e1d0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-heading);
+}
+
+.modalTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.navBtn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #555;
+    padding: 0 0.5rem;
+    transition: transform 0.1s;
+}
+
+.navBtn:active {
+    transform: scale(0.9);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 1fr;
+    /* Hand-drawn look border handled in cells */
+    border-top: 2px solid #e0e0e0;
+    border-left: 2px solid #e0e0e0;
+}
+
+.dayHeader {
+    text-align: center;
+    font-weight: bold;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #777;
+    font-family: var(--font-patrick);
+}
+
+.cell {
+    position: relative;
+    aspect-ratio: 1;
+    /* Square cells */
+    border-right: 2px solid #e0e0e0;
+    /* Rough grey */
+    border-bottom: 2px solid #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-family: var(--font-patrick);
+    font-size: 1.2rem;
+    color: #444;
+    transition: background-color 0.2s;
+    background-color: transparent;
+}
+
+.cell:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.cellDisabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.cellToday {
+    background-color: rgba(253, 224, 71, 0.2);
+    /* Light yellow */
+    /* Add a subtle hand-drawn circle via border-radius? or box-shadow */
+}
+
+.cellSelected {
+    background-color: rgba(253, 224, 71, 0.5);
+    /* Stronger yellow */
+}
+
+.indicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 0.8rem;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    /* Adjust so it doesn't overlap header nav if needed */
+    display: none;
+    /* We have backdrop click, maybe not needed or put separate */
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Dark mode overrides if needed, but paper usually stays light. 
+   If user wants full dark mode, we adjust colors. */
+:global([data-theme='dark']) .modal {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #eee;
+}
+
+:global([data-theme='dark']) .modalTitle {
+    color: #eee;
+}
+
+:global([data-theme='dark']) .navBtn {
+    color: #bbb;
+}
+
+:global([data-theme='dark']) .cell {
+    border-color: #444;
+    color: #ccc;
+}
+
+:global([data-theme='dark']) .cell:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}

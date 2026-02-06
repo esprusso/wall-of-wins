@@ -1,141 +1,624 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
-
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
-  display: flex;
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 2rem;
+    min-height: 100vh;
 }
 
-.main {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
+.mainColumn {
+    width: 100%;
+    padding: 2rem;
 }
 
-.intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
+/* Floating Toggle Button */
+.topRightControls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
 }
 
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
+.floatingBtn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: #fbbf24;
+    /* amber-400 */
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
+.floatingBtn:hover {
+    transform: scale(1.1);
+    background-color: #f59e0b;
+    /* amber-500 */
+    margin-right: 1rem;
 }
 
-.intro a {
-  font-weight: 500;
-  color: var(--text-primary);
+.streakCounter {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px 15px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-right: 1rem;
+    height: 50px;
 }
 
-.ctas {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
+.fireIcon {
+    font-size: 1.5rem;
 }
 
-.ctas a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
-  cursor: pointer;
-  width: fit-content;
-  font-weight: 500;
+.streakCount {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f97316;
+    /* Orange-500 */
+    font-family: var(--font-patrick), cursive;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+:global([data-theme='dark']) .streakCount {
+    color: #f5f5f5;
+    /* Off-white in dark mode per user request */
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+/* Dark Mode Glow */
+:global([data-theme='dark']) .streakCounter {
+    background-color: rgba(30, 30, 30, 0.9);
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+    /* Orange glow */
+    border: 1px solid rgba(249, 115, 22, 0.3);
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
+.statsSummary {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+}
 
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+:global([data-theme='dark']) .statsSummary {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.statLabel {
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+:global([data-theme='dark']) .statLabel {
+    color: #aaa;
+}
+
+.statValue {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    font-family: var(--font-patrick), cursive;
+}
+
+:global([data-theme='dark']) .statValue {
+    color: #eee;
+}
+
+/* Slide-out Drawer */
+.drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 350px;
+    max-width: 80vw;
+    background-color: #fffbf0;
+    /* Off-white/cream */
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 200;
+    padding: 2rem;
+    padding-top: 5rem;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+:global([data-theme='dark']) .drawer {
+    background-color: #262626;
+    /* Neutral-800 */
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.drawerOpen {
+    transform: translateX(0);
+}
+
+/* Backdrop */
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 150;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.backdropOpen {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.logoContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+}
+
+.logo {
+    height: 10rem;
+    /* Significantly increased for visibility */
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: height 0.3s ease;
 }
 
 @media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
-
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
+    .logo {
+        height: 7rem;
+        /* Increased for mobile */
+    }
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
+:global([data-theme='dark']) .logo {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) brightness(1.1);
+}
 
-  .page {
-    --background: #000;
-    --foreground: #000;
+.subtitle {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #eab308;
+    /* yellow-500 */
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+}
 
-    --text-primary: #ededed;
-    --text-secondary: #999;
+:global([data-theme='dark']) .subtitle {
+    color: #f3f4f6;
+    /* Off-white override */
+    text-shadow: none;
+}
 
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
-  }
+.iconButton {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    padding: 0 0.5rem;
+    transition: transform 0.2s;
+    color: #555;
+    /* Default icon color */
+}
+
+:global([data-theme='dark']) .iconButton {
+    color: #ccc;
+    /* Lighter icon color in dark mode */
+}
+
+.iconButton:hover {
+    transform: scale(1.1);
+}
+
+.previewContainer {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1rem;
+    border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.removePreviewBtn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.dateInput {
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-family: inherit;
+    background-color: white;
+}
+
+/* Frosted Glass Form */
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Frosted base */
+    backdrop-filter: blur(12px);
+    /* Blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Subtle border */
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Dark Mode - Slight adjustment but generally reusing the frosted look */
+:global([data-theme='dark']) .form {
+    background-color: rgba(0, 0, 0, 0.2);
+    /* Darker frost */
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.inputGroup {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+}
+
+.input {
+    padding: 0.8rem 1.2rem;
+    font-size: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    /* Lighter border for clean look */
+    border-radius: 8px;
+    flex-grow: 1;
+    font-family: inherit;
+    /* Nunito */
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+:global([data-theme='dark']) .input {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+:global([data-theme='dark']) .input::placeholder {
+    color: #aaa;
+}
+
+.addButton {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.2rem;
+    background-color: #333333;
+    /* Dark Charcoal */
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s, background-color 0.2s, box-shadow 0.2s;
+    min-width: 120px;
+    font-family: var(--font-heading);
+    /* Enforce Playfair Display */
+}
+
+.addButton:hover {
+    background-color: #1a1a1a;
+}
+
+/* Dark Mode: Solid White with Black Text for Max Contrast */
+:global([data-theme='dark']) .addButton {
+    background-color: #ffffff;
+    color: #000000;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+}
+
+:global([data-theme='dark']) .addButton:hover {
+    background-color: #f5f5f5;
+    /* Slightly muted white on interaction */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.addButton:active {
+    transform: translateY(2px);
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Color Picker */
+.colorPicker {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+}
+
+.colorOptionRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.colorOptionRow:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.colorCircle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    /* Prevent shrinking */
+    flex-shrink: 0;
+}
+
+.colorLabel {
+    font-size: 1rem;
+    color: #555;
+    font-weight: 500;
+}
+
+:global([data-theme='dark']) .colorLabel {
+    color: #ccc;
+    /* Light grey for visibility */
+}
+
+.colorOptionSelected .colorCircle {
+    border-color: #333;
+    transform: scale(1.1);
+}
+
+.colorOptionSelected .colorLabel {
+    color: #eab308;
+    /* Yellow-500 to match button */
+    font-weight: bold;
+    text-shadow: 0 0 1px rgba(234, 179, 8, 0.3);
+}
+
+:global([data-theme='dark']) .colorOptionSelected .colorLabel {
+    color: #facc15;
+    /* Yellow-400 */
+    text-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+}
+
+/* Color definitions for picker circles */
+.bgYellow {
+    background-color: #fef3c7;
+}
+
+.bgGreen {
+    background-color: #dcfce7;
+}
+
+.bgBlue {
+    background-color: #dbeafe;
+}
+
+.bgTeal {
+    background-color: #ccfbf1;
+}
+
+.bgPink {
+    background-color: #fca5a5;
+}
+
+/* Search Styling */
+.searchContainer {
+    position: relative;
+    width: 100%;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+    /* Move padding here to keep alignment but allow icon positioning relative to this if needed, or better yet, just remove padding or handle icon */
+}
+
+/* Actually, if I remove padding from JS, and use the container relative, the icon is absolute.
+   If I want the input to be smaller than full width, I should use margin.
+   If I want the icon inside the input, I should position it relative to the input's box start.
+   If the container is just a wrapper, let's keep it simple.
+   I'll remove the local padding in JS.
+   And set the icon left to 15px. If input is minimal width, that works.
+   The drawer padding is 2rem.
+   If I want the input slightly indented?
+   Let's stick to the previous plan: Remove JS padding, let CSS handle it.
+*/
+.searchContainer {
+    position: relative;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 25px;
+    /* Increased from 20px */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: #666;
+    pointer-events: none;
+    z-index: 10;
+    /* Ensure on top */
+}
+
+.searchInput {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3.5rem;
+    /* Increased left padding for icon spacing */
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 50px;
+    /* Pill shape */
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.05);
+    font-family: inherit;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+:global([data-theme='dark']) .searchIcon {
+    color: #aaa;
+}
+
+:global([data-theme='dark']) .searchInput {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+}
+
+:global([data-theme='dark']) .searchInput:focus {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+:global([data-theme='dark']) .searchInput::placeholder {
+    color: #aaa;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.empty {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #666;
+    margin-top: 2rem;
+}
+
+/* Top Left Controls for Search */
+.topLeftControls {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    display: flex;
+}
+
+.searchWrapper {
+    position: relative;
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.searchIconBtn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: transform 0.2s;
+}
+
+.searchIconBtn:hover {
+    transform: scale(1.1);
+}
+
+:global([data-theme='dark']) .searchIconBtn {
+    background-color: #333;
+    color: #eee;
+}
+
+.searchInputMain {
+    height: 50px;
+    border: none;
+    border-radius: 25px;
+    background-color: white;
+    font-size: 1.1rem;
+    padding-left: 3.5rem;
+    /* Space for icon */
+    padding-right: 0;
+    width: 50px;
+    /* Start collapsed behind icon */
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    /* Clickable to expand */
+}
+
+.searchInputMain.expanded {
+    width: 300px;
+    padding-right: 1rem;
+    opacity: 1;
+    cursor: text;
+}
+
+:global([data-theme='dark']) .searchInputMain {
+    background-color: #333;
+    color: white;
 }

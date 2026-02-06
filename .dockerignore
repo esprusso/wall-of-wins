@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.DS_Store
+*.log
+
+# Synology Thumbnail/Index directories
+@eaDir
+*/@eaDir
+**/*/@eaDir
+

@@ -1,0 +1,17 @@
+version: '3'
+services:
+  wall-of-wins:
+    container_name: wall-of-wins
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_PATH=/app/db/wins.db
+      - NODE_ENV=production
+      - TZ=America/Chicago
+    volumes:
+      # Persist SQLite Database
+      - ./db:/app/db
+      # Persist Uploaded Images
+      - ./public/uploads:/app/public/uploads

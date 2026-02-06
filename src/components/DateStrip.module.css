@@ -1,0 +1,141 @@
+.stripContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.4);
+    /* Transparent "Tape" look */
+    backdrop-filter: blur(2px);
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 10px 20px;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    /* Slight rounding for tape edges */
+}
+
+:global([data-theme='dark']) .stripContainer {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.navBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #888;
+    padding: 0 1rem;
+    transition: color 0.2s, transform 0.2s;
+    font-family: var(--font-patrick), cursive;
+    /* Match app font */
+}
+
+:global([data-theme='dark']) .navBtn {
+    color: #bbb;
+}
+
+.navBtn:hover {
+    color: #333;
+    transform: scale(1.2);
+}
+
+:global([data-theme='dark']) .navBtn:hover {
+    color: #fff;
+}
+
+.daysRow {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.dayBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    width: 60px;
+    transition: transform 0.2s;
+    position: relative;
+    font-family: var(--font-body);
+}
+
+.dayBtn:hover {
+    transform: translateY(-2px);
+}
+
+.dayName {
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: var(--font-body);
+}
+
+:global([data-theme='dark']) .dayName {
+    color: #ccc;
+    /* Light grey */
+}
+
+.dayNumber {
+    font-size: 1.4rem;
+    color: #333;
+    font-weight: bold;
+    font-family: var(--font-patrick), cursive;
+    /* Explicitly set to accent as requested */
+}
+
+:global([data-theme='dark']) .dayNumber {
+    color: #e5e5e5;
+    /* Light grey/off-white */
+}
+
+.active {
+    position: relative;
+}
+
+/* Hand-drawn circle effect for active state */
+.active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    width: 50px;
+    height: 50px;
+    border: 3px solid #eab308;
+    /* Yellow-500 */
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    /* Organic shape */
+    pointer-events: none;
+}
+
+/* Activity Dot - Centered above the date */
+.hasWin::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    /* Moved above */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: #eab308;
+    /* Yellow-500 */
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Highlight today's date number in red */
+.isToday .dayNumber {
+    color: #ef4444 !important;
+    /* Red-500, force override dark mode */
+}
