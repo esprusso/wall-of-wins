@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import confetti from 'canvas-confetti';
 import StickyNote from '@/components/StickyNote';
 import DateStrip from '@/components/DateStrip';
@@ -44,7 +45,8 @@ export default function Home() {
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [isMonthlyCalendarOpen, setIsMonthlyCalendarOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [theme, setTheme] = useState('light');
+    const [theme, setTheme] = useState('auto'); // Default to auto
+    const [effectiveTheme, setEffectiveTheme] = useState('light');
     const [stats, setStats] = useState({ currentStreak: 0, bestStreak: 0, totalWins: 0 }); // Stats state
     const fileInputRef = useRef(null);
 
@@ -66,7 +68,8 @@ export default function Home() {
         })
     );
 
-    // Initialize date and theme on mount
+    // Initialize theme on mount
+    // Initialize theme, date, and stats on mount
     useEffect(() => {
         // Get local date YYYY-MM-DD
         const now = new Date();
@@ -75,25 +78,51 @@ export default function Home() {
             .split('T')[0];
         setSelectedDate(localDate);
 
-        // Load theme from local storage or system preference
+        // Load theme from local storage
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
             setTheme(savedTheme);
-        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            setTheme('dark');
         }
 
         fetchStats();
     }, []);
 
-    // Persist theme changes
+    // Handle theme changes and system preference listeners
     useEffect(() => {
-        localStorage.setItem('theme', theme);
-        document.documentElement.setAttribute('data-theme', theme);
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const applyTheme = () => {
+            let newTheme = theme;
+            if (theme === 'auto') {
+                newTheme = mediaQuery.matches ? 'dark' : 'light';
+            }
+            setEffectiveTheme(newTheme);
+            document.documentElement.setAttribute('data-theme', newTheme);
+        };
+
+        applyTheme(); // Apply immediately
+
+        // Listen for system changes if in auto mode
+        if (theme === 'auto') {
+            mediaQuery.addEventListener('change', applyTheme);
+        }
+
+        // Persist preference
+        if (theme === 'auto') {
+            localStorage.removeItem('theme');
+        } else {
+            localStorage.setItem('theme', theme);
+        }
+
+        return () => mediaQuery.removeEventListener('change', applyTheme);
     }, [theme]);
 
     const toggleTheme = () => {
-        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+        setTheme(prev => {
+            if (prev === 'light') return 'dark';
+            if (prev === 'dark') return 'auto';
+            return 'light';
+        });
     };
 
     // Fetch Logic
@@ -402,7 +431,7 @@ export default function Home() {
                     aria-label="Toggle Theme"
                     style={{ marginRight: '1rem' }}
                 >
-                    {theme === 'light' ? '🌙' : '☀️'}
+                    {theme === 'auto' ? '🌗' : (theme === 'light' ? '🌙' : '☀️')}
                 </button>
                 <button
                     className={styles.floatingBtn}
@@ -419,6 +448,15 @@ export default function Home() {
                 >
                     🏆
                 </button>
+                <Link href="/settings" style={{ textDecoration: 'none' }}>
+                    <button
+                        className={styles.floatingBtn}
+                        aria-label="Settings"
+                        style={{ marginLeft: '1rem' }}
+                    >
+                        ⚙️
+                    </button>
+                </Link>
             </div>
 
             <div
