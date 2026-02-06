@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wall of Wins 🧱🏆
 
-## Getting Started
+A digital space to track your daily victories, small or big. "Wall of Wins" is designed to help you build consistency, gratitude, and a visual history of your achievements with a charming, hand-drawn aesthetic.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Daily Logging**: Quickly add text-based wins to your daily board.
+- **Photo Memories**: Attach images to your wins to make them memorable.
+- **Categorization**: Organize wins with color-coded sticky notes:
+  - 🟨 **Yellow**: General
+  - 🟩 **Green**: Personal/Health
+  - 🟦 **Blue**: Work
+  - 🩷 **Pink**: Creative/Fun
+- **Hall of Fame**: Star your favorite wins to keep them in a dedicated "Hall of Fame" drawer.
+- **Consistency Tracking**: View your activity heatmap and track your current/best streaks.
+- **Calendar Navigation**: Browse past wins using a monthly calendar view.
+- **Drag & Drop**: Reorder your daily wins exactly how you want them.
+- **Search**: Instantly find past memories with a powerful search bar.
+- **Theming**: Toggle between Light ☀️ and Dark 🌙 modes.
+- **Responsive Design**: Works great on desktop and mobile.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Language**: JavaScript
+- **Database**: SQLite (via `better-sqlite3`) for robust, local-first data storage.
+- **Styling**: CSS Modules with a custom hand-drawn/paper aesthetic.
+- **Drag & Drop**: `@dnd-kit`
+- **Animations**: `canvas-confetti` for celebrations.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Getting Started
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js (v18 or higher recommended)
+- npm or yarn
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd wall-of-wins
+   ```
 
-## Deploy on Vercel
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the app.
+
+## 🐳 Deployment & Self-Hosting
+
+This project is designed to be self-hosted, specifically optimized for environments like a Synology NAS using Docker.
+
+### Docker
+
+1. **Build the image:**
+   ```bash
+   docker build -t wall-of-wins .
+   ```
+
+2. **Run the container:**
+   ```bash
+   docker run -d -p 3000:3000 -v ./db:/app/db -v ./public/uploads:/app/public/uploads wall-of-wins
+   ```
+
+*Note: The `deploy.sh` script is available for automated deployment workflows, specifically tailored for rsync/ssh deployment to remote servers.*
+
+## 📂 Project Structure
+
+- `src/app`: Main application routes and views (Next.js App Router).
+- `src/components`: Reusable UI components (StickyNote, Calendar, DateStrip, etc.).
+- `src/lib`: Utility functions and database configuration.
+- `db`: SQLite database file location.
+- `public`: Static assets and uploaded images.
+
+## 🤝 Contributing
+
+Feel free to fork this project and make it your own! Pull requests for new features or bug fixes are welcome.
+
+## 📄 License
+
+[MIT](LICENSE)
