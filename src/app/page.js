@@ -6,6 +6,7 @@ import confetti from 'canvas-confetti';
 import StickyNote from '@/components/StickyNote';
 import DateStrip from '@/components/DateStrip';
 import CalendarModal from '@/components/CalendarModal';
+import NavigationSidebar from '@/components/NavigationSidebar';
 import { ActivityCalendar } from 'react-activity-calendar';
 import { Tooltip } from 'react-tooltip';
 import toast, { Toaster } from 'react-hot-toast';
@@ -41,10 +42,9 @@ export default function Home() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [isMonthlyCalendarOpen, setIsMonthlyCalendarOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [theme, setTheme] = useState('auto'); // Default to auto
     const [effectiveTheme, setEffectiveTheme] = useState('light');
     const [stats, setStats] = useState({ currentStreak: 0, bestStreak: 0, totalWins: 0 }); // Stats state
@@ -162,7 +162,8 @@ export default function Home() {
 
     useEffect(() => {
         if (selectedDate) {
-            fetchDailyWins(selectedDate);
+            setLoading(true);
+            fetchDailyWins(selectedDate).finally(() => setLoading(false));
         }
     }, [selectedDate]);
 
@@ -400,96 +401,64 @@ export default function Home() {
 
     return (
         <div className={styles.container}>
-            <div className={styles.topLeftControls}>
-                <div className={styles.searchWrapper}>
-                    <button
-                        className={styles.searchIconBtn}
-                        onClick={() => setIsSearchOpen(!isSearchOpen)}
-                        aria-label="Toggle Search"
-                    >
-                        🔍
-                    </button>
-                    <input
-                        type="text"
-                        placeholder="Search memories..."
-                        value={searchQuery}
-                        onChange={(e) => handleSearch(e.target.value)}
-                        className={`${styles.searchInputMain} ${isSearchOpen ? styles.expanded : ''}`}
-                        onClick={() => !isSearchOpen && setIsSearchOpen(true)}
-                    />
-                </div>
-            </div>
-
-            <div className={styles.topRightControls}>
-                <div className={styles.streakCounter} title="Current Streak">
-                    <span className={styles.fireIcon}>🔥</span>
-                    <span className={styles.streakCount}>{stats.currentStreak}</span>
-                </div>
-                <button
-                    className={styles.floatingBtn}
-                    onClick={toggleTheme}
-                    aria-label="Toggle Theme"
-                    style={{ marginRight: '1rem' }}
-                >
-                    {theme === 'auto' ? '🌗' : (theme === 'light' ? '🌙' : '☀️')}
-                </button>
-                <button
-                    className={styles.floatingBtn}
-                    onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                    aria-label="Toggle Calendar"
-                    style={{ marginRight: '1rem' }}
-                >
-                    📅
-                </button>
-                <button
-                    className={styles.floatingBtn}
-                    onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-                    aria-label="Toggle Hall of Fame"
-                >
-                    🏆
-                </button>
-                <Link href="/settings" style={{ textDecoration: 'none' }}>
-                    <button
-                        className={styles.floatingBtn}
-                        aria-label="Settings"
-                        style={{ marginLeft: '1rem' }}
-                    >
-                        ⚙️
-                    </button>
-                </Link>
-            </div>
+            <NavigationSidebar
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+                searchQuery={searchQuery}
+                onSearch={handleSearch}
+                onDailyWallClick={() => {
+                    const now = new Date();
+                    const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000))
+                        .toISOString()
+                        .split('T')[0];
+                    setSelectedDate(localDate);
+                    setIsSidebarOpen(false);
+                }}
+                onCalendarClick={() => {
+                    setIsSidebarOpen(false);
+                    // Open monthly calendar as "Calendar"
+                    setIsMonthlyCalendarOpen(true);
+                }}
+                onHallOfFameClick={() => {
+                    // This is now handled by Link within the component, but we keep the prop clean or just remove it if Sidebar ignores it.
+                    // The Sidebar ignores this prop now for HOF as it uses Link internally.
+                    setIsSidebarOpen(false);
+                }}
+                onThemeToggle={toggleTheme}
+                theme={theme}
+            />
 
             <div
-                className={`${styles.backdrop} ${(isDrawerOpen || isCalendarOpen) ? styles.backdropOpen : ''}`}
+                className={`${styles.backdrop} ${(isCalendarOpen) ? styles.backdropOpen : ''}`}
                 onClick={() => {
-                    setIsDrawerOpen(false);
                     setIsCalendarOpen(false);
                 }}
             />
 
-            <main className={styles.mainColumn}>
+            <header className={styles.header}>
+                <button
+                    className={styles.hamburgerBtn}
+                    onClick={() => setIsSidebarOpen(true)}
+                    aria-label="Open Menu"
+                >
+                    ☰
+                </button>
+
                 <div className={styles.logoContainer}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/logo.png" alt="Wall of Wins" className={styles.logo} />
                 </div>
 
+                <div className={styles.streakCounter} title="Current Streak">
+                    <span className={styles.fireIcon}>🔥</span>
+                    <span className={styles.streakCount}>{stats.currentStreak}</span>
+                </div>
+            </header>
+
+            <main className={styles.mainColumn}>
+
                 {/* Date Picker */}
                 {/* Date Strip Navigation */}
-                <div className={styles.controls}>
-                    <DateStrip
-                        selectedDate={selectedDate}
-                        onDateChange={setSelectedDate}
-                    />
-                    <button
-                        className={styles.iconButton} // We can reuse iconButton or create a new style
-                        onClick={() => setIsMonthlyCalendarOpen(true)}
-                        aria-label="Open Monthly View"
-                        title="Month View"
-                        style={{ marginLeft: '10px', fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer' }}
-                    >
-                        🗓️
-                    </button>
-                </div>
 
                 <form onSubmit={handleAddWin} className={styles.form}>
                     <div className={styles.inputGroup}>
@@ -571,7 +540,7 @@ export default function Home() {
                     ) : loading && dailyWins.length === 0 ? (
                         <p>Loading wins...</p>
                     ) : dailyWins.length === 0 ? (
-                        <p className={styles.empty}>No wins for this day. Add one above!</p>
+                        <p className={styles.empty}>Nothing logged.</p>
                     ) : (
                         <DndContext
                             sensors={sensors}
@@ -595,38 +564,19 @@ export default function Home() {
                         </DndContext>
                     )}
                 </div>
+
             </main>
 
-            <aside className={`${styles.drawer} ${isDrawerOpen ? styles.drawerOpen : ''}`}>
-                <h2 className={styles.subtitle}>Hall of Fame ⭐️</h2>
-
-                <div className={styles.statsSummary}>
-                    <div className={styles.statItem}>
-                        <span className={styles.statLabel}>Total Wins</span>
-                        <span className={styles.statValue}>{stats.totalWins}</span>
-                    </div>
-                    <div className={styles.statItem}>
-                        <span className={styles.statLabel}>Best Streak</span>
-                        <span className={styles.statValue}>{stats.bestStreak}</span>
-                    </div>
+            {/* Fixed Bottom Timeline */}
+            <div className={styles.bottomNav}>
+                <div className={styles.controls}>
+                    <DateStrip
+                        selectedDate={selectedDate}
+                        onDateChange={setSelectedDate}
+                    />
                 </div>
+            </div>
 
-                <div className={styles.grid} style={{ flexDirection: 'column', alignItems: 'center' }}>
-                    {starredWins.length === 0 ? (
-                        <p className={styles.empty} style={{ fontSize: '1rem' }}>Star a win to see it here!</p>
-                    ) : (
-                        starredWins.map((win) => (
-                            <StickyNote
-                                key={`starred-${win.id}`}
-                                win={win}
-                                onToggleStar={handleToggleStar}
-                                onDelete={handleDelete}
-                                onUpdate={handleUpdate}
-                            />
-                        ))
-                    )}
-                </div>
-            </aside>
 
             <aside className={`${styles.drawer} ${isCalendarOpen ? styles.drawerOpen : ''}`}>
                 <h2 className={styles.subtitle}>Consistency 📅</h2>

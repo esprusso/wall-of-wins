@@ -3,14 +3,30 @@
 
 import { useState, useRef, useEffect } from 'react';
 import styles from './StickyNote.module.css';
+import VanillaTilt from 'vanilla-tilt';
 
-export default function StickyNote({ win, onToggleStar, onDelete, onUpdate }) {
+export default function StickyNote({ win, onToggleStar, onDelete, onUpdate, isGalleryView = false }) {
     // Random slight rotation for that "sticky note" feel
     // Use a ref or state to keep the rotation stable across re-renders
     const [rotation, setRotation] = useState(0);
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(win.content);
     const textAreaRef = useRef(null);
+    const cardRef = useRef(null);
+
+    useEffect(() => {
+        if (isGalleryView && cardRef.current) {
+            VanillaTilt.init(cardRef.current, {
+                max: 15,
+                speed: 400,
+                glare: true,
+                'max-glare': 0.3,
+                scale: 1.05,
+                axis: 'x' // Disable X axis rotation -> Only tilt left/right (Y axis rotation)
+            });
+        }
+        return () => cardRef.current?.vanillaTilt?.destroy();
+    }, [isGalleryView]);
 
     useEffect(() => {
         setRotation(Math.floor(Math.random() * 6) - 3);
@@ -44,8 +60,13 @@ export default function StickyNote({ win, onToggleStar, onDelete, onUpdate }) {
 
     return (
         <div
-            className={`${styles.note} ${isPolaroid ? styles.polaroid : styles[win.color || 'yellow']}`}
-            style={{ transform: `rotate(${rotation}deg)` }}
+            ref={cardRef}
+            className={`${styles.note} ${isPolaroid ? styles.polaroid : styles[win.color || 'yellow']} ${isGalleryView ? styles.galleryCard : ''}`}
+            style={{
+                transform: isGalleryView ? undefined : `rotate(${rotation}deg)`,
+                // In gallery view, remove rotation for clean grid look.
+                transformStyle: isGalleryView ? 'preserve-3d' : 'flat',
+            }}
         >
             <button
                 className={styles.deleteBtn}

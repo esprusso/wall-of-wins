@@ -1,47 +1,60 @@
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-bottom: 2rem;
+    width: 100%;
     min-height: 100vh;
+    padding-bottom: 200px;
 }
 
 .mainColumn {
     width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 2rem;
 }
 
-/* Floating Toggle Button */
-.topRightControls {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
+/* Main Header */
+.header {
     display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    /* Added side padding */
+    margin-bottom: 2rem;
+    position: relative;
+    width: 100%;
+    min-height: 12rem;
+    /* Ensure enough height for the absolute logo */
 }
 
-.floatingBtn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+.hamburgerBtn {
+    background: none;
     border: none;
-    background-color: #fbbf24;
-    /* amber-400 */
-    color: white;
-    font-size: 1.5rem;
+    font-size: 2rem;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, background-color 0.2s;
+    color: #333;
+    z-index: 100;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
     display: flex;
+    /* alignment */
     align-items: center;
     justify-content: center;
 }
 
-.floatingBtn:hover {
-    transform: scale(1.1);
-    background-color: #f59e0b;
-    /* amber-500 */
-    margin-right: 1rem;
+.hamburgerBtn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
+
+:global([data-theme='dark']) .hamburgerBtn {
+    color: #fff;
+}
+
+:global([data-theme='dark']) .hamburgerBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+
 
 .streakCounter {
     background-color: rgba(255, 255, 255, 0.9);
@@ -51,8 +64,9 @@
     align-items: center;
     gap: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-right: 1rem;
-    height: 50px;
+    margin-right: 0;
+    height: 40px;
+    /* Slightly smaller for header */
 }
 
 .fireIcon {
@@ -174,9 +188,20 @@
 .logoContainer {
     display: flex;
     justify-content: center;
-    margin-bottom: 2rem;
-    padding-top: 1rem;
+    align-items: center;
+    flex-grow: 1;
+    /* Ensure it takes up space to center itself if siblings are uneven width? 
+       Actually with space-between, if we want true center, absolute positioning might be needed 
+       or equal width spacers. For now flex-grow 1 with justify-center works well enough.
+    */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    padding-top: 0;
+    margin-bottom: 0;
 }
+
 
 .logo {
     height: 10rem;
@@ -267,10 +292,34 @@
     justify-content: center;
 }
 
+.bottomNav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 90;
+    /* Below modal (150) and hamburger (100) */
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+:global([data-theme='dark']) .bottomNav {
+    background-color: rgba(30, 30, 30, 0.8);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+}
+
 .controls {
     display: flex;
     justify-content: center;
-    margin-bottom: 2rem;
+    /* Reset margins as it is now inside flex container with padding */
+    margin: 0;
 }
 
 .dateInput {
@@ -547,78 +596,4 @@
     font-size: 1.5rem;
     color: #666;
     margin-top: 2rem;
-}
-
-/* Top Left Controls for Search */
-.topLeftControls {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 100;
-    display: flex;
-}
-
-.searchWrapper {
-    position: relative;
-    height: 50px;
-    display: flex;
-    align-items: center;
-}
-
-.searchIconBtn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    background-color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-    position: absolute;
-    left: 0;
-    top: 0;
-    transition: transform 0.2s;
-}
-
-.searchIconBtn:hover {
-    transform: scale(1.1);
-}
-
-:global([data-theme='dark']) .searchIconBtn {
-    background-color: #333;
-    color: #eee;
-}
-
-.searchInputMain {
-    height: 50px;
-    border: none;
-    border-radius: 25px;
-    background-color: white;
-    font-size: 1.1rem;
-    padding-left: 3.5rem;
-    /* Space for icon */
-    padding-right: 0;
-    width: 50px;
-    /* Start collapsed behind icon */
-    opacity: 0;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    /* Clickable to expand */
-}
-
-.searchInputMain.expanded {
-    width: 300px;
-    padding-right: 1rem;
-    opacity: 1;
-    cursor: text;
-}
-
-:global([data-theme='dark']) .searchInputMain {
-    background-color: #333;
-    color: white;
 }
