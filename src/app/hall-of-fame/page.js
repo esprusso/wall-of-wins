@@ -1,10 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-// import Masonry from 'react-masonry-css'; // Removed unused dependency
-import { ActivityCalendar } from 'react-activity-calendar';
-import { Tooltip } from 'react-tooltip';
+import { motion } from 'framer-motion';
 import StickyNote from '@/components/StickyNote';
 import styles from './page.module.css';
 
@@ -12,26 +9,18 @@ export default function HallOfFame() {
     const [starredWins, setStarredWins] = useState([]);
     const [filteredWins, setFilteredWins] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [activityData, setActivityData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [winsRes, activityRes] = await Promise.all([
-                    fetch('/api/wins?starred=true'),
-                    fetch('/api/wins/activity')
-                ]);
+                const winsRes = await fetch('/api/wins?starred=true');
 
                 if (winsRes.ok) {
                     const wins = await winsRes.json();
                     setStarredWins(wins);
                     setFilteredWins(wins);
-                }
-                if (activityRes.ok) {
-                    const activity = await activityRes.json();
-                    setActivityData(activity);
                 }
             } catch (error) {
                 console.error('Failed to fetch HOF data', error);
@@ -81,19 +70,18 @@ export default function HallOfFame() {
 
     return (
         <div className={styles.container}>
-            <div className={styles.topControls}>
-                <Link href="/" className={styles.backBtn} aria-label="Back to Dashboard">
-                    ←
-                </Link>
-            </div>
-            <div className={styles.certificateSheet}>
+            <motion.div
+                className={styles.certificateSheet}
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+            >
                 <div className={styles.noiseOverlay}></div>
                 <div className={styles.vignetteOverlay}></div>
                 <div className={styles.pageFrame}></div>
 
                 <header className={styles.header}>
                     <img src="/hof.png" alt="Hall of Fame" className={styles.logo} />
-                    <p className={styles.subtitle}>A collection of your greatest moments.</p>
                 </header>
 
                 <div className={styles.searchContainer}>
@@ -125,40 +113,7 @@ export default function HallOfFame() {
                     ))}
                 </div>
 
-                <section className={styles.heatmapSection}>
-                    <h2 className={styles.heatmapTitle}>Consistency Record</h2>
-                    {activityData.length > 0 ? (
-                        <>
-                            <ActivityCalendar
-                                data={activityData}
-                                theme={{
-                                    light: ['#3f3f46', '#fde68a', '#fcd34d', '#fbbf24', '#f59e0b'],
-                                    dark: ['#3f3f46', '#fde68a', '#fcd34d', '#fbbf24', '#f59e0b'],
-                                }}
-                                labels={{
-                                    legend: {
-                                        less: 'Less',
-                                        more: 'More',
-                                    },
-                                }}
-                                showWeekdayLabels
-                                blockSize={14}
-                                blockMargin={4}
-                                fontSize={14}
-                                renderBlock={(block, activity) => {
-                                    return React.cloneElement(block, {
-                                        'data-tooltip-id': 'react-tooltip',
-                                        'data-tooltip-content': `${activity.count} wins on ${activity.date}`,
-                                    });
-                                }}
-                            />
-                            <Tooltip id="react-tooltip" />
-                        </>
-                    ) : (
-                        <p style={{ color: '#aaa', fontStyle: 'italic' }}>Record your first win to see your streak!</p>
-                    )}
-                </section>
-            </div>
+            </motion.div>
 
             {/* Note: pure CSS columns order items vertically first (down col 1, then col 2). 
                 If the user wants chronological left-to-right, we need JS masonry. 

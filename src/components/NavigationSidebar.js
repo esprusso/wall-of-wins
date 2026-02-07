@@ -9,6 +9,7 @@ export default function NavigationSidebar({
     onDailyWallClick,
     onCalendarClick,
     onHallOfFameClick,
+    onConsistencyClick,
     onThemeToggle,
     theme
 }) {
@@ -24,7 +25,7 @@ export default function NavigationSidebar({
             <aside className={`${styles.sidebarContainer} ${isOpen ? styles.open : ''}`}>
                 {/* Zone A: Global Search */}
                 <div className={styles.zoneSearch}>
-                    <span className={styles.label}>Search</span>
+
                     <div className={styles.searchInputWrapper}>
                         <span className={styles.searchIcon}>🔍</span>
                         <input
@@ -39,7 +40,7 @@ export default function NavigationSidebar({
 
                 {/* Zone B: Navigation */}
                 <nav className={styles.zoneNav}>
-                    <span className={styles.label}>Navigation</span>
+
                     <button className={styles.navButton} onClick={onDailyWallClick}>
                         <span className={styles.navIcon}>🏠</span>
                         Daily Wall
@@ -47,6 +48,10 @@ export default function NavigationSidebar({
                     <button className={styles.navButton} onClick={onCalendarClick}>
                         <span className={styles.navIcon}>📅</span>
                         Calendar
+                    </button>
+                    <button className={styles.navButton} onClick={onConsistencyClick}>
+                        <span className={styles.navIcon}>📊</span>
+                        Consistency
                     </button>
                     <Link href="/hall-of-fame" style={{ textDecoration: 'none' }}>
                         <button className={styles.navButton} onClick={onClose}>

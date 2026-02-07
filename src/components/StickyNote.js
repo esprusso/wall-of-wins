@@ -4,6 +4,7 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './StickyNote.module.css';
 import VanillaTilt from 'vanilla-tilt';
+import { Star, Dumbbell, Briefcase, Palette, Award, Sparkles } from 'lucide-react';
 
 export default function StickyNote({ win, onToggleStar, onDelete, onUpdate, isGalleryView = false }) {
     // Random slight rotation for that "sticky note" feel
@@ -58,6 +59,73 @@ export default function StickyNote({ win, onToggleStar, onDelete, onUpdate, isGa
 
     const isPolaroid = Boolean(win.image_url);
 
+    // Helpers for Collector Card
+    const getCategoryIcon = (color) => {
+        switch (color) {
+            case 'yellow': return <Sparkles size={40} className={styles.categoryIcon} />;
+            case 'green': return <Dumbbell size={40} className={styles.categoryIcon} />;
+            case 'blue': return <Briefcase size={40} className={styles.categoryIcon} />;
+            case 'pink': return <Palette size={40} className={styles.categoryIcon} />;
+            default: return <Award size={40} className={styles.categoryIcon} />;
+        }
+    };
+
+    const getGradientClass = (color) => {
+        switch (color) {
+            case 'yellow': return styles.gradientYellow;
+            case 'green': return styles.gradientGreen;
+            case 'blue': return styles.gradientBlue;
+            case 'pink': return styles.gradientPink;
+            default: return styles.gradientCustom;
+        }
+    };
+
+    if (isGalleryView) {
+        return (
+            <div
+                ref={cardRef}
+                className={styles.collectorCard}
+                style={{
+                    // No rotation for collector cards
+                    transformStyle: 'preserve-3d',
+                }}
+            >
+                {/* Hero Section */}
+                <div className={`${styles.cardHero} ${!isPolaroid ? getGradientClass(win.color) : ''}`}
+                    style={(!isPolaroid && win.color && win.color.startsWith('#')) ? { background: win.color } : {}}
+                >
+                    {isPolaroid ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img src={win.image_url} alt="Win" className={styles.cardCoverImage} />
+                    ) : (
+                        <div className={styles.cardIconBadge}>
+                            {getCategoryIcon(win.color)}
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer Section */}
+                <div className={styles.cardFooter}>
+                    <div className={styles.cardTitle} title={win.content}>
+                        {win.content}
+                    </div>
+
+                    <div className={styles.cardDate}>
+                        {win.date_created ? new Date(win.date_created).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
+                    </div>
+                </div>
+
+                {/* Hover Controls (Star/Delete) - Absolute positioned over card? 
+                    Or maybe we don't show them in "Museum" view to keep it clean? 
+                    User requested "Collector Cards". Usually read-only or subtle.
+                    Let's keep them hidden or very subtle.
+                    For now, I'll omit the delete button to make it feel like a "Permanent Record".
+                    If user needs management, they can do it on the Daily Wall.
+                */}
+            </div>
+        );
+    }
+
     return (
         <div
             ref={cardRef}
@@ -66,6 +134,7 @@ export default function StickyNote({ win, onToggleStar, onDelete, onUpdate, isGa
                 transform: isGalleryView ? undefined : `rotate(${rotation}deg)`,
                 // In gallery view, remove rotation for clean grid look.
                 transformStyle: isGalleryView ? 'preserve-3d' : 'flat',
+                backgroundColor: win.color && win.color.startsWith('#') ? win.color : undefined
             }}
         >
             <button

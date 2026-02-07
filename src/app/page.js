@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, cloneElement } from 'react';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
 import StickyNote from '@/components/StickyNote';
 import DateStrip from '@/components/DateStrip';
 import CalendarModal from '@/components/CalendarModal';
+import HeatmapModal from '@/components/HeatmapModal';
 import NavigationSidebar from '@/components/NavigationSidebar';
 import { ActivityCalendar } from 'react-activity-calendar';
 import { Tooltip } from 'react-tooltip';
 import toast, { Toaster } from 'react-hot-toast';
+import { useAppContext } from '@/context/AppContext';
 import styles from './page.module.css';
 
 // DnD Imports
@@ -31,23 +33,20 @@ import {
 import SortableWin from '@/components/SortableWin';
 
 export default function Home() {
+    const { searchQuery, isHeatmapOpen, isMonthlyCalendarOpen, setIsHeatmapOpen, setIsMonthlyCalendarOpen, fetchStats } = useAppContext();
     const [dailyWins, setDailyWins] = useState([]);
     const [starredWins, setStarredWins] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [activityData, setActivityData] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedColor, setSelectedColor] = useState('yellow'); // Default color
+    const [hoveredCategory, setHoveredCategory] = useState(null);
+    const [customColor, setCustomColor] = useState('#ffffff'); // For color picker
+    const colorInputRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-    const [isMonthlyCalendarOpen, setIsMonthlyCalendarOpen] = useState(false);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [theme, setTheme] = useState('auto'); // Default to auto
-    const [effectiveTheme, setEffectiveTheme] = useState('light');
-    const [stats, setStats] = useState({ currentStreak: 0, bestStreak: 0, totalWins: 0 }); // Stats state
     const fileInputRef = useRef(null);
 
     // DnD Sensors
@@ -69,7 +68,7 @@ export default function Home() {
     );
 
     // Initialize theme on mount
-    // Initialize theme, date, and stats on mount
+    // Initialize date and stats on mount
     useEffect(() => {
         // Get local date YYYY-MM-DD
         const now = new Date();
@@ -78,52 +77,8 @@ export default function Home() {
             .split('T')[0];
         setSelectedDate(localDate);
 
-        // Load theme from local storage
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            setTheme(savedTheme);
-        }
-
         fetchStats();
     }, []);
-
-    // Handle theme changes and system preference listeners
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-        const applyTheme = () => {
-            let newTheme = theme;
-            if (theme === 'auto') {
-                newTheme = mediaQuery.matches ? 'dark' : 'light';
-            }
-            setEffectiveTheme(newTheme);
-            document.documentElement.setAttribute('data-theme', newTheme);
-        };
-
-        applyTheme(); // Apply immediately
-
-        // Listen for system changes if in auto mode
-        if (theme === 'auto') {
-            mediaQuery.addEventListener('change', applyTheme);
-        }
-
-        // Persist preference
-        if (theme === 'auto') {
-            localStorage.removeItem('theme');
-        } else {
-            localStorage.setItem('theme', theme);
-        }
-
-        return () => mediaQuery.removeEventListener('change', applyTheme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => {
-            if (prev === 'light') return 'dark';
-            if (prev === 'dark') return 'auto';
-            return 'light';
-        });
-    };
 
     // Fetch Logic
     const fetchDailyWins = async (date) => {
@@ -172,17 +127,7 @@ export default function Home() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const fetchStats = async () => {
-        try {
-            const res = await fetch('/api/wins/stats');
-            if (res.ok) {
-                const data = await res.json();
-                setStats(data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch stats', error);
-        }
-    };
+    // fetchStats is now from context
 
     const fetchActivityData = async () => {
         try {
@@ -197,10 +142,10 @@ export default function Home() {
     };
 
     useEffect(() => {
-        if (isCalendarOpen) {
+        if (isHeatmapOpen) {
             fetchActivityData();
         }
-    }, [isCalendarOpen]);
+    }, [isHeatmapOpen]);
 
     // Handlers
     const handleFileSelect = (e) => {
@@ -352,23 +297,27 @@ export default function Home() {
         }
     };
 
-    const handleSearch = async (query) => {
-        setSearchQuery(query);
-        if (!query.trim()) {
-            setSearchResults([]);
-            return;
-        }
-
-        try {
-            const res = await fetch(`/api/wins/search?q=${encodeURIComponent(query)}`);
-            if (res.ok) {
-                const data = await res.json();
-                setSearchResults(data);
+    // Search Effect
+    useEffect(() => {
+        const performSearch = async () => {
+            if (!searchQuery.trim()) {
+                setSearchResults([]);
+                return;
             }
-        } catch (error) {
-            console.error('Search failed', error);
-        }
-    };
+
+            try {
+                const res = await fetch(`/api/wins/search?q=${encodeURIComponent(searchQuery)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setSearchResults(data);
+                }
+            } catch (error) {
+                console.error('Search failed', error);
+            }
+        };
+
+        performSearch();
+    }, [searchQuery]);
 
     const handleDragEnd = async (event) => {
         const { active, over } = event;
@@ -401,59 +350,10 @@ export default function Home() {
 
     return (
         <div className={styles.container}>
-            <NavigationSidebar
-                isOpen={isSidebarOpen}
-                onClose={() => setIsSidebarOpen(false)}
-                searchQuery={searchQuery}
-                onSearch={handleSearch}
-                onDailyWallClick={() => {
-                    const now = new Date();
-                    const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000))
-                        .toISOString()
-                        .split('T')[0];
-                    setSelectedDate(localDate);
-                    setIsSidebarOpen(false);
-                }}
-                onCalendarClick={() => {
-                    setIsSidebarOpen(false);
-                    // Open monthly calendar as "Calendar"
-                    setIsMonthlyCalendarOpen(true);
-                }}
-                onHallOfFameClick={() => {
-                    // This is now handled by Link within the component, but we keep the prop clean or just remove it if Sidebar ignores it.
-                    // The Sidebar ignores this prop now for HOF as it uses Link internally.
-                    setIsSidebarOpen(false);
-                }}
-                onThemeToggle={toggleTheme}
-                theme={theme}
-            />
-
-            <div
-                className={`${styles.backdrop} ${(isCalendarOpen) ? styles.backdropOpen : ''}`}
-                onClick={() => {
-                    setIsCalendarOpen(false);
-                }}
-            />
-
-            <header className={styles.header}>
-                <button
-                    className={styles.hamburgerBtn}
-                    onClick={() => setIsSidebarOpen(true)}
-                    aria-label="Open Menu"
-                >
-                    ☰
-                </button>
-
-                <div className={styles.logoContainer}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo.png" alt="Wall of Wins" className={styles.logo} />
-                </div>
-
-                <div className={styles.streakCounter} title="Current Streak">
-                    <span className={styles.fireIcon}>🔥</span>
-                    <span className={styles.streakCount}>{stats.currentStreak}</span>
-                </div>
-            </header>
+            <div className={styles.logoContainer}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.png" alt="Wall of Wins" className={styles.logo} />
+            </div>
 
             <main className={styles.mainColumn}>
 
@@ -462,23 +362,16 @@ export default function Home() {
 
                 <form onSubmit={handleAddWin} className={styles.form}>
                     <div className={styles.inputGroup}>
-                        <input
-                            type="text"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            placeholder="What's your win?"
-                            className={styles.input}
-                        />
-
-                        {/* File Upload Button */}
+                        {/* File Upload Button (Left Icon) */}
                         <button
                             type="button"
-                            className={styles.iconButton}
+                            className={styles.inputIconLeft}
                             onClick={triggerFileSelect}
                             title="Add Photo"
                         >
                             📷
                         </button>
+
                         <input
                             type="file"
                             accept="image/*"
@@ -487,7 +380,23 @@ export default function Home() {
                             style={{ display: 'none' }}
                         />
 
-                        <button type="submit" className={styles.addButton}>Add Win</button>
+                        {/* Main Input */}
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            placeholder="What's your win?"
+                            className={styles.input}
+                        />
+
+                        {/* Submit Button (Right Icon) */}
+                        <button
+                            type="submit"
+                            className={styles.inputIconRight}
+                            title="Add Win"
+                        >
+                            ➔
+                        </button>
                     </div>
 
                     {/* Image Preview */}
@@ -507,18 +416,43 @@ export default function Home() {
                         </div>
                     )}
 
-                    {/* Color Picker with Labels */}
-                    <div className={styles.colorPicker}>
-                        {colors.map((c) => (
+                    {/* Color Picker Dots */}
+                    <div className={styles.colorPickerContainer}>
+                        <div className={styles.colorPicker}>
+                            {colors.map((c) => (
+                                <div
+                                    key={c.id}
+                                    className={`${styles.colorDot} ${c.class} ${selectedColor === c.id ? styles.colorDotSelected : ''}`}
+                                    onClick={() => setSelectedColor(c.id)}
+                                    onMouseEnter={() => setHoveredCategory(c.label)}
+                                    onMouseLeave={() => setHoveredCategory(null)}
+                                />
+                            ))}
+
+                            {/* Custom Color Dot */}
                             <div
-                                key={c.id}
-                                className={`${styles.colorOptionRow} ${selectedColor === c.id ? styles.colorOptionSelected : ''}`}
-                                onClick={() => setSelectedColor(c.id)}
+                                className={`${styles.colorDot} ${styles.bgCustom} ${selectedColor === customColor ? styles.colorDotSelected : ''}`}
+                                onClick={() => colorInputRef.current?.click()}
+                                onMouseEnter={() => setHoveredCategory('Custom Color')}
+                                onMouseLeave={() => setHoveredCategory(null)}
+                                style={selectedColor.startsWith('#') && selectedColor !== customColor ? { background: selectedColor } : {}}
                             >
-                                <div className={`${styles.colorCircle} ${c.class}`} />
-                                <span className={styles.colorLabel}>{c.label}</span>
+                                <input
+                                    type="color"
+                                    ref={colorInputRef}
+                                    style={{ opacity: 0, position: 'absolute', inset: 0, cursor: 'pointer' }}
+                                    value={customColor}
+                                    onChange={(e) => {
+                                        const hex = e.target.value;
+                                        setCustomColor(hex);
+                                        setSelectedColor(hex);
+                                    }}
+                                />
                             </div>
-                        ))}
+                        </div>
+                        <div className={styles.categoryNameDisplay}>
+                            {hoveredCategory || colors.find(c => c.id === selectedColor)?.label || (selectedColor.startsWith('#') ? 'Custom Color' : '')}
+                        </div>
                     </div>
                 </form>
 
@@ -578,55 +512,17 @@ export default function Home() {
             </div>
 
 
-            <aside className={`${styles.drawer} ${isCalendarOpen ? styles.drawerOpen : ''}`}>
-                <h2 className={styles.subtitle}>Consistency 📅</h2>
-
-                <div className={styles.heatmapContainer} style={{ marginBottom: '2rem', width: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-                    {activityData.length > 0 ? (
-                        <>
-                            <ActivityCalendar
-                                data={activityData}
-                                theme={{
-                                    light: ['#d1d5db', '#fde68a', '#fcd34d', '#fbbf24', '#f59e0b'],
-                                    dark: ['#3f3f46', '#fde68a', '#fcd34d', '#fbbf24', '#f59e0b'],
-                                }}
-                                labels={{
-                                    legend: {
-                                        less: 'Less',
-                                        more: 'More',
-                                    },
-                                }}
-                                showWeekdayLabels
-                                blockSize={12}
-                                blockMargin={4}
-                                fontSize={12}
-                                renderBlock={(block, activity) => {
-                                    const { key, ...blockProps } = block;
-                                    return (
-                                        <div
-                                            key={key}
-                                            {...blockProps}
-                                            data-tooltip-id="react-tooltip"
-                                            data-tooltip-content={`${activity.count} wins on ${activity.date}`}
-                                        />
-                                    );
-                                }}
-                            />
-                            <Tooltip id="react-tooltip" />
-                        </>
-                    ) : (
-                        <p style={{ color: '#666', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                            Start recording wins to see your streak!
-                        </p>
-                    )}
-                </div>
-            </aside>
             <Toaster position="bottom-center" />
             <CalendarModal
                 isOpen={isMonthlyCalendarOpen}
                 onClose={() => setIsMonthlyCalendarOpen(false)}
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
+            />
+            <HeatmapModal
+                isOpen={isHeatmapOpen}
+                onClose={() => setIsHeatmapOpen(false)}
+                activityData={activityData}
             />
         </div >
     );

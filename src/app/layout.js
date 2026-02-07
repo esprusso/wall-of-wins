@@ -35,10 +35,19 @@ export const metadata = {
     },
 };
 
+import { AppProvider } from '@/context/AppContext';
+import AppShell from '@/components/AppShell';
+
 export default function RootLayout({ children }) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={`${playfair.variable} ${nunito.variable} ${patrickHand.variable}`}>{children}</body>
+            <body className={`${playfair.variable} ${nunito.variable} ${patrickHand.variable}`}>
+                <AppProvider>
+                    <AppShell>
+                        {children}
+                    </AppShell>
+                </AppProvider>
+            </body>
         </html>
     );
 }

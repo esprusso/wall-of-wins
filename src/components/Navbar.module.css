@@ -1,0 +1,92 @@
+/* Navbar Container */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    z-index: 50;
+    /* Above grid, below modal/sidebar */
+    background: transparent;
+    /* As requested */
+    pointer-events: none;
+    /* Let clicks pass through empty areas */
+}
+
+/* Children pointer events re-enabled */
+.leftControls,
+.rightControls {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+}
+
+/* Hamburger / Back Button */
+.navButton {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.navButton:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.05);
+}
+
+.navButton:active {
+    transform: scale(0.95);
+}
+
+:global([data-theme='dark']) .navButton {
+    color: #fff;
+}
+
+:global([data-theme='dark']) .navButton:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Streak Counter (Reused styles mostly) */
+.streakCounter {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px 15px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 40px;
+}
+
+.fireIcon {
+    font-size: 1.5rem;
+}
+
+.streakCount {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f97316;
+    /* Orange-500 */
+    font-family: var(--font-patrick), cursive;
+}
+
+:global([data-theme='dark']) .streakCount {
+    color: #f5f5f5;
+}
+
+:global([data-theme='dark']) .streakCounter {
+    background-color: rgba(30, 30, 30, 0.9);
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}

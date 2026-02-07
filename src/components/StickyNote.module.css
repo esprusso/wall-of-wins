@@ -183,3 +183,149 @@
 :global([data-theme='dark']) .polaroidCaption {
     color: #ddd;
 }
+
+/* Collector Card Styles for Hall of Fame */
+.collectorCard {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background-color: white;
+    border: 1px solid #e5e5e5;
+    /* Neutral-200 */
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    /* Shadow-lg */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+    /* Double border effect using ring */
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 0 0 4px rgba(234, 179, 8, 0.1);
+}
+
+.collectorCard:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(234, 179, 8, 0.4);
+    /* Gold glow ring */
+}
+
+:global([data-theme='dark']) .collectorCard {
+    background-color: #171717;
+    /* Neutral-900 */
+    border-color: #404040;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 0 4px rgba(234, 179, 8, 0.1);
+}
+
+:global([data-theme='dark']) .collectorCard:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(234, 179, 8, 0.5);
+}
+
+.cardHero {
+    flex: 2;
+    /* Top 2/3rds */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.cardCoverImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cardIconBadge {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    color: #444;
+}
+
+:global([data-theme='dark']) .cardIconBadge {
+    background-color: rgba(30, 30, 30, 0.8);
+    color: #eee;
+}
+
+.cardFooter {
+    flex: 1;
+    /* Bottom 1/3rd */
+    background-color: white;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: 2;
+}
+
+:global([data-theme='dark']) .cardFooter {
+    background-color: #171717;
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.cardTitle {
+    font-family: var(--font-heading);
+    /* Playfair Display */
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    /* Dark Blue */
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+:global([data-theme='dark']) .cardTitle {
+    color: #e2e8f0;
+}
+
+.cardDate {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a8a29e;
+    /* Stone-400 */
+    margin-top: auto;
+}
+
+/* Category Gradients for Hero Background */
+.gradientYellow {
+    background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
+}
+
+.gradientGreen {
+    background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%);
+}
+
+.gradientBlue {
+    background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+}
+
+.gradientPink {
+    background: linear-gradient(135deg, #ffe4e6 0%, #fda4af 100%);
+}
+
+.gradientCustom {
+    background: linear-gradient(135deg, #f3f4f6 0%, #d1d5db 100%);
+}
+
+:global([data-theme='dark']) .gradientYellow {
+    background: linear-gradient(135deg, #78350f 0%, #b45309 100%);
+}

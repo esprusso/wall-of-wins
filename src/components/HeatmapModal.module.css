@@ -1,0 +1,238 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 0.2s forwards;
+}
+
+.modal {
+    position: relative;
+    background-color: #FDFBF7;
+    /* Premium Cream */
+    width: 95%;
+    max-width: 900px;
+    padding: 2rem;
+    border-radius: 6px;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(184, 134, 11, 0.3) inset;
+    /* Subtle Gold Border */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center horizontally */
+    justify-content: center;
+    max-height: 90vh;
+    animation: slideUp 0.3s ease-out;
+    overflow-y: auto;
+}
+
+/* Header: Flex Between Items Start */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.titleContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.modalTitle {
+    font-size: 2rem;
+    font-family: var(--font-playfair);
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    font-family: var(--font-patrick);
+    color: #888;
+    font-weight: 400;
+}
+
+.totalWins {
+    font-size: 1rem;
+    color: #666;
+    font-weight: normal;
+    margin-top: 0.2rem;
+    font-family: var(--font-patrick);
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #AAA;
+    transition: color 0.2s;
+    line-height: 1;
+    padding: 0 0.5rem;
+}
+
+.closeBtn:hover {
+    color: #e74c3c;
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background-color: #ddd;
+    margin: 1.5rem 0;
+}
+
+.instruction {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-patrick);
+}
+
+/* Chart Container */
+.heatmapContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 2rem;
+    /* Spacing before divider */
+}
+
+/* Failsafe to hide library footer */
+.heatmapContainer article>footer {
+    display: none !important;
+}
+
+.heatmapWrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+/* Footer & Legend */
+.divider {
+    width: 100%;
+    height: 1px;
+    background-color: #E5E5E5;
+    margin-bottom: 1.5rem;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    /* Center the legend */
+    width: 100%;
+    padding: 0 1rem;
+    font-family: var(--font-patrick);
+    color: #555;
+}
+
+.totalWins {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.legend {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-patrick);
+    color: #555;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.legendColors {
+    display: flex;
+    gap: 4px;
+}
+
+.legendColors span {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.legendLabel {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dayLabels {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    /* Matches blockMargin */
+    padding-top: 30px;
+    /* Adjusted for larger grid (fontSize 18 approx) */
+    margin-right: 12px;
+    padding-right: 12px;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dayLabel {
+    height: 20px;
+    /* Matches new blockSize */
+    font-size: 1.1rem;
+    /* Matches .subtitle */
+    line-height: 20px;
+    color: #555;
+    /* Darker for better contrast */
+    font-family: var(--font-patrick);
+    text-align: right;
+    font-weight: 500;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Dark mode overrides */
+:global([data-theme='dark']) .modal {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #eee;
+}
+
+:global([data-theme='dark']) .modalTitle {
+    color: #eee;
+}
+
+:global([data-theme='dark']) .closeBtn {
+    color: #bbb;
+}
+
+:global([data-theme='dark']) .closeBtn:hover {
+    color: #fff;
+}

@@ -5,13 +5,16 @@ A digital space to track your daily victories, small or big. "Wall of Wins" is d
 ## ✨ Features
 
 - **Daily Logging**: Quickly add text-based wins to your daily board.
+- **Modern Input**: A sleek, unified journaling interface with photo uploads and custom colors.
 - **Photo Memories**: Attach images to your wins to make them memorable.
 - **Categorization**: Organize wins with color-coded sticky notes:
   - 🟨 **Yellow**: General
   - 🟩 **Green**: Personal/Health
   - 🟦 **Blue**: Work
   - 🩷 **Pink**: Creative/Fun
-- **Hall of Fame**: Star your favorite wins to keep them in a dedicated "Hall of Fame" drawer.
+  - 🌈 **Custom**: Pick any color you like!
+- **Hall of Fame**: Star your favorite wins to keep them in a dedicated drawer.
+  - **Collector Cards**: View your Hall of Fame as premium "Unlocked Achievements" with holographic foil effects and category icons.
 - **Consistency Tracking**: View your activity heatmap and track your current/best streaks.
 - **Calendar Navigation**: Browse past wins using a monthly calendar view.
 - **Drag & Drop**: Reorder your daily wins exactly how you want them.
